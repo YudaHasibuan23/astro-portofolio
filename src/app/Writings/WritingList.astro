@@ -1,0 +1,46 @@
+---
+import { getCollection } from "astro:content";
+import dayjs from "dayjs";
+import WritingListItem from "./WritingListItem.astro";
+
+// dayjs locale id
+import "dayjs/locale/id";
+dayjs.locale("id");
+
+// dayjs timezone
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Jakarta");
+
+let blogs = await getCollection("blog");
+
+blogs.forEach((blogPost) => {
+  blogPost.data.publishDate = dayjs(blogPost.data.publishDate).format("YYYY-MM-DDTHH:mm:ss.000Z");
+});
+
+blogs = blogs.sort((a, b) => {
+  return dayjs(b.data.publishDate).unix() - dayjs(a.data.publishDate).unix();
+});
+
+const posts = blogs.map((blogPost) => {
+  return {
+    title: blogPost.data.title,
+    publishedAt: blogPost.data.publishDate,
+    tags: blogPost.data.tags,
+    slug: blogPost.data.slug,
+  };
+});
+
+const articles = posts.slice(0, 4);
+---
+
+<ul
+  id="writing-list"
+  class="mx-auto grid max-w-[1244px] grid-cols-1 place-content-center gap-x-5 gap-y-3 pt-24 sm:grid-cols-2 sm:gap-y-6 lg:grid-cols-[repeat(2,480px)] xl:grid-cols-[repeat(2,545px)]"
+>
+  {
+    articles?.map((article: { title: string; slug?: string; link?: string; tags?: string[] }) => (
+      <WritingListItem slug={article.slug} title={article.title} tags={article.tags} />
+    ))
+  }
+</ul>
