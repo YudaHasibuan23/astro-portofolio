@@ -1,0 +1,10 @@
+{
+  "extends": "astro/tsconfigs/base",
+  "include": ["**/*"],
+  "exclude": ["node_modules", "**/node_modules/*"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "verbatimModuleSyntax": true
+  }
+}
